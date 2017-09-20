@@ -42,6 +42,7 @@ import LogoutIcon from 'material-ui-icons/ExitToApp';
 
 // Components
 import Home from '../modules/Home';
+import Counter from '../modules/Counter';
 import Users from '../modules/Users';
 import Preferences from '../modules/Preferences';
 import Login from '../modules/Login';
@@ -53,6 +54,13 @@ const routeConfigs = [
     path: '/home',
     name: 'Home',
     component: Home,
+    icon: HomeIcon,
+    requiresLogin: false,
+  },
+  {
+    path: '/counter',
+    name: 'Counter',
+    component: Counter,
     icon: HomeIcon,
     requiresLogin: false,
   },
@@ -138,14 +146,16 @@ class AuthRedirectRoute extends React.Component {
       <Route
         {...rest}
         render={props =>
-          !requiresLogin || loggedIn
-            ? <ChildComponent {...props} />
-            : <Redirect
-                to={{
-                  pathname: '/login',
-                  state: { from: props.location },
-                }}
-              />}
+          !requiresLogin || loggedIn ? (
+            <ChildComponent {...props} />
+          ) : (
+            <Redirect
+              to={{
+                pathname: '/login',
+                state: { from: props.location },
+              }}
+            />
+          )}
       />
     );
   }
@@ -170,17 +180,18 @@ IndexRoute.propTypes = {
 };
 
 // Map all configured routes into AuthRedirectRoute components
-export const ConfiguredRoutes = ({ ...rest }) =>
+export const ConfiguredRoutes = ({ ...rest }) => (
   <Switch>
-    {routeConfigs.map(routeConfig =>
+    {routeConfigs.map(routeConfig => (
       <ConnectedAuthRedirectRoute
         key={routeConfig.path}
         {...routeConfig}
         {...rest}
-      />,
-    )}
+      />
+    ))}
     <Redirect to={{ pathname: '/' }} />
-  </Switch>;
+  </Switch>
+);
 
 // Check that routeConfigs array is a valid RouteConfigShape
 PropTypes.checkPropTypes(
